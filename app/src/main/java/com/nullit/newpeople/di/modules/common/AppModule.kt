@@ -1,0 +1,76 @@
+package com.nullit.newpeople.di.modules.common
+
+import android.app.Application
+import androidx.room.Room
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
+import com.bumptech.glide.request.RequestOptions
+import com.google.gson.Gson
+import com.nullit.newpeople.R
+import com.nullit.newpeople.api.main.MainApiService
+import com.nullit.newpeople.di.scopes.MainScope
+import com.nullit.newpeople.room.dao.UserDao
+import com.nullit.newpeople.room.db.MainDataBase
+import com.nullit.newpeople.util.Constants
+import dagger.Module
+import dagger.Provides
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
+import javax.inject.Singleton
+
+@Module
+class AppModule {
+
+    @Singleton
+    @Provides
+    fun provideGson(): Gson {
+        return Gson()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRetrofitBuilder(gson: Gson): Retrofit.Builder {
+        return Retrofit.Builder().baseUrl(Constants.BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+    }
+
+    @Singleton
+    @Provides
+    fun provideMainApiService(retrofitBuilder: Retrofit.Builder): MainApiService {
+        return retrofitBuilder.build().create(MainApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGlideInstance(
+        application: Application,
+        requestOptions: RequestOptions
+    ): RequestManager {
+        return Glide.with(application)
+            .setDefaultRequestOptions(requestOptions)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRequestOptions(): RequestOptions {
+        return RequestOptions
+            .placeholderOf(R.mipmap.image)
+            .error(R.mipmap.image)
+
+    }
+
+    @Singleton
+    @Provides
+    fun providerRoomDataBase(application: Application): MainDataBase {
+        return Room.databaseBuilder(application, MainDataBase::class.java, MainDataBase.DB_NAME)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun providerUserDao(mainDataBase: MainDataBase): UserDao {
+        return mainDataBase.getUserDao()
+    }
+}

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">NewPeople</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="login_button_text">Вход</string>
+    <string name="send_photo">Сформировать заявку</string>
+    <string name="logout">Выход</string>
+    <string name="send">Отправить</string>
+    <string name="cancel">Отменить</string>
+    <string name="choose_category">Выберите категорию нарушения</string>
+    <string name="report">Заявка</string>
+</resources>

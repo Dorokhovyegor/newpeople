@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.nullit.newpeople.ui.main.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_sendFormFragment"
+            app:destination="@id/sendFormFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_sendVideoFragment"
+            app:destination="@id/sendVideoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendVideoFragment"
+        android:name="com.nullit.newpeople.ui.main.video.SendVideoFragment"
+        android:label="SendVideoFragment" />
+    <fragment
+        android:id="@+id/sendFormFragment"
+        android:name="com.nullit.newpeople.ui.main.photo.SendFormFragment"
+        android:label="SendFormFragment" />
+</navigation>
