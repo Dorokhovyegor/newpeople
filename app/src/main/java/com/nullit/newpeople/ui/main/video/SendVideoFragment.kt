@@ -17,6 +17,8 @@ import com.nullit.newpeople.service.VideoUploader
 import com.nullit.newpeople.ui.base.BaseMainFragment
 import com.nullit.newpeople.util.ViewModelProviderFactory
 import com.nullit.newpeople.util.getRealPathFromURI
+import com.nullit.newpeople.util.putIdViolation
+import com.nullit.newpeople.util.putVideoPath
 import kotlinx.android.synthetic.main.send_video_fragment.*
 import javax.inject.Inject
 
@@ -112,8 +114,8 @@ class SendVideoFragment : BaseMainFragment(), ActivityResultHandler {
 
     private fun startUploading(lastPath: String, lastId: Int) {
         val intent = Intent(requireActivity(), VideoUploader::class.java)
-        intent.putExtra("videoPath", lastPath)
-        intent.putExtra("id", lastId)
+        intent.putVideoPath(lastPath)
+        intent.putIdViolation(lastId)
         requireActivity().startService(intent)
     }
 }

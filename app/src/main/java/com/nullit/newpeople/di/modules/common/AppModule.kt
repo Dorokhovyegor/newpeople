@@ -14,6 +14,8 @@ import com.nullit.newpeople.room.db.MainDataBase
 import com.nullit.newpeople.util.Constants
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -31,7 +33,15 @@ class AppModule {
     @Singleton
     @Provides
     fun provideRetrofitBuilder(gson: Gson): Retrofit.Builder {
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+
+
         return Retrofit.Builder().baseUrl(Constants.BASE_URL)
+            .client(client)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
     }

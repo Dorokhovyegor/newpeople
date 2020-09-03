@@ -1,8 +1,11 @@
 package com.nullit.newpeople.api.main
 
-import com.nullit.newpeople.api.main.dto.LoginDto
+import com.google.gson.JsonObject
 import com.nullit.newpeople.api.main.dto.CreateViolationDto
+import com.nullit.newpeople.api.main.dto.LoginDto
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.Response
 import retrofit2.http.*
 
 interface MainApiService {
@@ -13,6 +16,7 @@ interface MainApiService {
         @Part("login") login: String,
         @Part("password") password: String
     ): LoginDto
+
 
     @Multipart
     @POST("/api/v1/violations")
@@ -29,8 +33,8 @@ interface MainApiService {
         @Path("id") id: Int,
         @Part("_method") description: String = "patch",
         @Part("action") action: String = "add-video",
-        requestBody: RequestBody
-    ): CreateViolationDto
+        @Part video: MultipartBody.Part
+    ): Response<JsonObject>
 
     @Streaming
     @Multipart
