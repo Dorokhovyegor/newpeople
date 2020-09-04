@@ -10,6 +10,7 @@ import com.nullit.newpeople.R
 import com.nullit.newpeople.api.main.MainApiService
 import com.nullit.newpeople.di.scopes.MainScope
 import com.nullit.newpeople.room.dao.UserDao
+import com.nullit.newpeople.room.dao.VideoDao
 import com.nullit.newpeople.room.db.MainDataBase
 import com.nullit.newpeople.util.Constants
 import dagger.Module
@@ -82,5 +83,11 @@ class AppModule {
     @Provides
     fun providerUserDao(mainDataBase: MainDataBase): UserDao {
         return mainDataBase.getUserDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providerVideoDao(mainDataBase: MainDataBase): VideoDao {
+        return mainDataBase.getVideoDao()
     }
 }

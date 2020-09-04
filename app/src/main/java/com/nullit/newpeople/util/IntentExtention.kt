@@ -17,3 +17,19 @@ fun Intent.getViolationId(): Int {
 fun Intent.getVideoPath(): String {
     return this.getStringExtra("videoPath") ?: ""
 }
+
+fun Intent.putHasVideo(hasVideos: Boolean) {
+    this.putExtra("has_videos", hasVideos)
+}
+
+fun Intent.getHasVideo(): Boolean {
+    return this.getBooleanExtra("has_videos", false)
+}
+
+fun Intent.putFlagFromBroadcast(value: Boolean) {
+    this.putExtra("startFromBroadcast", value)
+}
+
+fun Intent.getFlagFromBroadcast(): Boolean {
+    return this.getBooleanExtra("startFromBroadcast", false)
+}
