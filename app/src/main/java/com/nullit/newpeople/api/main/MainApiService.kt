@@ -44,6 +44,6 @@ interface MainApiService {
         @Path("id") id: Int,
         @Part("_method") description: String = "patch",
         @Part("action") action: String = "add-photo",
-        requestBody: RequestBody
-    ): CreateViolationDto
+        photos: List<MultipartBody.Part>
+    ): Response<JsonObject>
 }

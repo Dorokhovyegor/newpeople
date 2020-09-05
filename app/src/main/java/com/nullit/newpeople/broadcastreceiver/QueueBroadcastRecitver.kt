@@ -3,7 +3,9 @@ package com.nullit.newpeople.broadcastreceiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.nullit.newpeople.service.VideoUploader
 import com.nullit.newpeople.ui.main.MainActivity
 import com.nullit.newpeople.util.getHasVideo

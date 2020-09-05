@@ -9,9 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startForegroundService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.google.android.material.snackbar.Snackbar
@@ -19,18 +19,18 @@ import com.nullit.newpeople.R
 import com.nullit.newpeople.broadcastreceiver.QueueBroadcastReceiver
 import com.nullit.newpeople.service.VideoUploader
 import com.nullit.newpeople.ui.base.BaseMainFragment
-import com.nullit.newpeople.util.*
+import com.nullit.newpeople.util.ViewModelProviderFactory
+import com.nullit.newpeople.util.getRealPathFromURI
 import kotlinx.android.synthetic.main.send_video_fragment.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SendVideoFragment : BaseMainFragment(), ActivityResultHandler {
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
-
     @Inject
     lateinit var requestManager: RequestManager
-
     lateinit var sendVideoViewModel: SendVideoViewModel
     private var lastPath: String? = null
     private var lastId: Int? = null
@@ -124,11 +124,14 @@ class SendVideoFragment : BaseMainFragment(), ActivityResultHandler {
     }
 
     private fun startUploading(lastPath: String, lastId: Int) {
-        val intent = Intent(requireActivity(), VideoUploader::class.java)
-        intent.putVideoPath(lastPath)
-        intent.putIdViolation(lastId)
-        intent.putFlagFromBroadcast(false)
-        startForegroundService(requireActivity(), intent)
+        lifecycleScope.launch {
+            sendVideoViewModel.addNewVideoIntoQueue(lastPath, lastId)
+            val intent = Intent(requireActivity(), VideoUploader::class.java)
+            requireActivity().startService(intent)
+            Toast.makeText(requireContext(), "Отправлено в очередь на отправку", Toast.LENGTH_SHORT)
+                .show()
+            findNavController().popBackStack()
+        }
     }
 
     private fun stopUploading() {

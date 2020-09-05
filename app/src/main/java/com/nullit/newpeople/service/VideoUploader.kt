@@ -3,23 +3,16 @@ package com.nullit.newpeople.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.nullit.newpeople.R
 import com.nullit.newpeople.api.main.MainApiService
-import com.nullit.newpeople.broadcastreceiver.QueueBroadcastReceiver.Companion.BROADCAST_VIDEO_ACTION
+import com.nullit.newpeople.room.dao.ProcessDao
 import com.nullit.newpeople.room.dao.UserDao
 import com.nullit.newpeople.room.dao.VideoDao
-import com.nullit.newpeople.room.entity.VideoProperty
-import com.nullit.newpeople.util.getFlagFromBroadcast
-import com.nullit.newpeople.util.getVideoPath
-import com.nullit.newpeople.util.getViolationId
-import com.nullit.newpeople.util.putHasVideo
 import dagger.android.DaggerService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.MultipartBody.Part.Companion.createFormData
@@ -42,54 +35,62 @@ class VideoUploader : DaggerService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // переменные
-        var violationId: Int
-        var videoPath: String
-        // заходим проверяем команды
-        intent?.let {
-            serviceScope.launch {
-                // если сообщение пришло из бродкаста, значит должны заглянуть в базу
-                if (it.getFlagFromBroadcast()) {
-                    val videoInfo = videoDao.getDoesNotUploadedVideo()
-                    if (videoInfo.isNotEmpty()) {
-                        violationId = videoInfo[0].violationId
-                        videoPath = videoInfo[0].videoPath
-                    } else {
-                        return@launch
-                    }
-                } else {
-                    violationId = intent.getViolationId()
-                    videoPath = intent.getVideoPath()
-                    videoDao.insertVideo(VideoProperty(violationId, videoPath, false))
-                }
-                showNotification(violationId)
-                val token = prepareToken()
+        serviceScope.launch {
+            val tokenResult = async {
+                prepareToken()
+            }
+            val token = tokenResult.await()
+            val videosResult = async {
+                videoDao.getDoesNotUploadedVideo()
+            }
+            val videos = videosResult.await()
+            videos.forEach {
+                val violationId = it.violationId
+
+                val videoPath = it.videoPath
                 val vFile = prepareVideoFile(videoPath)
-                val requestResult = mainApiService.addVideo(token = token, id = violationId, video = vFile)
-                if (requestResult.code() == 200) {
-                    videoDao.updateVideo(true, violationId)
+                val apiResult = async {
+                    mainApiService.addVideo(token = token, id = violationId, video = vFile)
                 }
-                val queue = videoDao.getDoesNotUploadedVideo()
-                if (queue.isEmpty()) {
-                    // если нет, то останавливаем
-                    stopSelf()
-                    stopForeground(true)
-                } else {
-                    // если есть, то посылаем бродкаст
-                    sendBroadcast(Intent(BROADCAST_VIDEO_ACTION).apply {
-                        putHasVideo(true)
-                    })
-                    stopForeground(true)
+                val requestResult = apiResult.await()
+                if (requestResult.code() == 200) {
+                    val updateVideoResult = async {
+                        videoDao.updateVideo(true, violationId)
+                    }
+                    updateVideoResult.await()
+                }
+                val queueAsynk = async {
+                    videoDao.getDoesNotUploadedVideo()
+                }
+                val queue = queueAsynk.await()
+                withContext(Dispatchers.Main) {
+                    if (queue.isNotEmpty()) {
+                        Toast.makeText(
+                            applicationContext,
+                            "Осталось в очереди: ${queue.size}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
+            stopForeground(true)
+            stopSelf()
         }
-        return Service.START_STICKY
+        return Service.START_NOT_STICKY
     }
 
-    private fun prepareVideoFile(videoPath: String): MultipartBody.Part {
+    private suspend fun prepareVideoFile(videoPath: String): MultipartBody.Part {
+        showNotification(1)
         val videoFile = File(videoPath)
+        withContext(Dispatchers.Main) {
+            Toast.makeText(
+                applicationContext,
+                "Видео ${videoFile.name} отправляется",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
         val videoBody: RequestBody = videoFile.asRequestBody("video/*".toMediaTypeOrNull())
-        return createFormData("video", videoFile.name, videoBody)
+        return createFormData("videos[0]", videoFile.name, videoBody)
     }
 
     private suspend fun prepareToken(): String {

@@ -33,3 +33,11 @@ fun Intent.putFlagFromBroadcast(value: Boolean) {
 fun Intent.getFlagFromBroadcast(): Boolean {
     return this.getBooleanExtra("startFromBroadcast", false)
 }
+
+fun Intent.putPhotos(list: ArrayList<String>) {
+    this.putStringArrayListExtra("photos", list)
+}
+
+fun Intent.getPhotos(): ArrayList<String>? {
+    return this.getStringArrayListExtra("photos")
+}
