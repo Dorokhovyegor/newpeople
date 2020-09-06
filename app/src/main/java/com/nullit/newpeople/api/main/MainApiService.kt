@@ -17,7 +17,6 @@ interface MainApiService {
         @Part("password") password: String
     ): LoginDto
 
-
     @Multipart
     @POST("/api/v1/violations")
     suspend fun createViolation(
@@ -36,6 +35,16 @@ interface MainApiService {
         @Part video: MultipartBody.Part
     ): Response<JsonObject>
 
+    @Multipart
+    @POST("/api/v1/violations/{id}")
+    suspend fun addType(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Part("_method") description: String = "patch",
+        @Part("action") action: String = "set-type",
+        @Part("type_id") typeId: Int
+    ): Response<JsonObject>
+
     @Streaming
     @Multipart
     @POST("/api/v1/violations/{id}")
@@ -44,6 +53,6 @@ interface MainApiService {
         @Path("id") id: Int,
         @Part("_method") description: String = "patch",
         @Part("action") action: String = "add-photo",
-        photos: List<MultipartBody.Part>
+        @Part photos: List<MultipartBody.Part>
     ): Response<JsonObject>
 }

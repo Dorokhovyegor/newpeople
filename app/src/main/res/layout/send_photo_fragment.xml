@@ -25,10 +25,9 @@
             android:id="@+id/photosRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="200dp"
-            android:minHeight="100dp"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
+            android:maxHeight="300dp"
             app:layout_constraintTop_toBottomOf="@id/titleReportId" />
 
         <TextView
@@ -41,13 +40,16 @@
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/photosRecyclerView" />
 
-        <LinearLayout
-            android:id="@+id/categoryLinearLayout"
+        <RadioGroup
+            android:id="@+id/categories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/categoryTitle" />
+            app:layout_constraintTop_toBottomOf="@id/categoryTitle">
+
+        </RadioGroup>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sendButton"
@@ -60,7 +62,7 @@
             android:text="@string/send"
             android:textAllCaps="false"
             android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/categoryLinearLayout" />
+            app:layout_constraintTop_toBottomOf="@id/categories" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancelButton"

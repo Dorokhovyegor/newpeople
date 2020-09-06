@@ -5,18 +5,18 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import com.esafirm.imagepicker.features.ImagePicker
 import com.nullit.newpeople.R
 import com.nullit.newpeople.ui.base.BaseActivity
-import com.nullit.newpeople.ui.main.video.ActivityResultHandler
-import com.nullit.newpeople.ui.main.video.AttachListener
-import com.nullit.newpeople.ui.main.video.SendVideoFragment
+import com.nullit.newpeople.ui.main.photo.ActivityResultHandlerPhoto
+import com.nullit.newpeople.ui.main.photo.AttachListenerPhoto
+import com.nullit.newpeople.ui.main.video.ActivityResultHandlerVideo
+import com.nullit.newpeople.ui.main.video.AttachListenerVideo
 
-class MainActivity : BaseActivity(), AttachListener {
+class MainActivity : BaseActivity(), AttachListenerVideo, AttachListenerPhoto {
 
-    var activityResultHandler: ActivityResultHandler? = null
+    var activityResultHandlerVideo: ActivityResultHandlerVideo? = null
+    var activityResultHandlerPhoto: ActivityResultHandlerPhoto? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,21 +25,40 @@ class MainActivity : BaseActivity(), AttachListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            data?.let { intent ->
-                val videoUri: Uri = intent.data!!
-                Log.e("MainActivityDebug", "$videoUri")
-                activityResultHandler?.onVideoResult(videoUri)
-            }
-        }
+        handleOnActivityResult(data, resultCode)
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onAttach(sendFragment: ActivityResultHandler) {
-        activityResultHandler = sendFragment
+    private fun handleOnActivityResult(intent: Intent?, resultCode: Int) {
+        intent?.let {
+            if (resultCode == Activity.RESULT_OK) {
+                if (intent.hasExtra("selectedImages")) {
+                    // значит тут фотки
+                    val images = ImagePicker.getImages(intent)
+                    activityResultHandlerPhoto?.onPhotosResult(images)
+                } else {
+                    // значит видео
+                    val videoUri: Uri = intent.data!!
+                    activityResultHandlerVideo?.onVideoResult(videoUri)
+                }
+            }
+        }
+    }
+
+    override fun onAttach(sendFragment: ActivityResultHandlerVideo) {
+        activityResultHandlerVideo = sendFragment
     }
 
     override fun onDetach() {
-        activityResultHandler = null
+        activityResultHandlerVideo = null
+    }
+
+    override fun onDetachPhoto() {
+        activityResultHandlerPhoto = null
+    }
+
+    override fun onAttach(sendFragment: ActivityResultHandlerPhoto) {
+        Log.e("MainActivity", sendFragment.toString())
+        activityResultHandlerPhoto = sendFragment
     }
 }

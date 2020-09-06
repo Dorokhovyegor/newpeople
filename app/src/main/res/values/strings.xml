@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NewPeople</string>
+    <string name="app_name">Новые люди</string>
     <string name="login">Логин</string>
     <string name="password">Пароль</string>
     <string name="login_button_text">Вход</string>

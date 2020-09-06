@@ -2,6 +2,7 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="100dp"
     android:layout_margin="4dp"
+    android:clickable="true"
     android:src="@drawable/ic_photo"
     android:scaleType="centerInside"
     android:background="@drawable/add_photo_background"

@@ -8,10 +8,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.nullit.newpeople.R
 import com.nullit.newpeople.api.main.MainApiService
+import com.nullit.newpeople.di.scopes.AuthScope
 import com.nullit.newpeople.di.scopes.MainScope
-import com.nullit.newpeople.room.dao.ProcessDao
-import com.nullit.newpeople.room.dao.UserDao
-import com.nullit.newpeople.room.dao.VideoDao
+import com.nullit.newpeople.repo.auth.AuthRepository
+import com.nullit.newpeople.repo.auth.AuthRepositoryImpl
+import com.nullit.newpeople.room.dao.*
 import com.nullit.newpeople.room.db.MainDataBase
 import com.nullit.newpeople.util.Constants
 import dagger.Module
@@ -94,7 +95,25 @@ class AppModule {
 
     @Singleton
     @Provides
+    fun providerPhotoDao(mainDataBase: MainDataBase): PhotoDao {
+        return mainDataBase.getPhotoDao()
+    }
+
+    @Singleton
+    @Provides
     fun providerProcessDao(mainDataBase: MainDataBase): ProcessDao {
         return mainDataBase.getProccessDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providerViolationDao(mainDataBase: MainDataBase): ViolationDao {
+        return mainDataBase.getViolationDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthRepo(apiService: MainApiService, userDao: UserDao, violationDao: ViolationDao): AuthRepository {
+        return AuthRepositoryImpl(apiService, userDao, violationDao)
     }
 }

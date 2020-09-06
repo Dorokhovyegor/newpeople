@@ -2,6 +2,7 @@ package com.nullit.newpeople.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.nullit.newpeople.R
@@ -38,6 +39,15 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun subscribeObservers() {
+        authViewModel.progressBar.observe(this, Observer {
+            if (it) {
+                backgroundProgress.visibility = View.VISIBLE
+                circularProgress.visibility = View.VISIBLE
+            } else {
+                backgroundProgress.visibility = View.GONE
+                circularProgress.visibility = View.GONE
+            }
+        })
         authViewModel.successLogin.observe(this, Observer { isAuthenticated ->
             if (isAuthenticated) {
                 startActivity(Intent(this, MainActivity::class.java))

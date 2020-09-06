@@ -4,6 +4,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import com.nullit.newpeople.R
 import com.nullit.newpeople.api.main.MainApiService
 import com.nullit.newpeople.room.dao.UserDao
 import com.nullit.newpeople.util.getPhotos
@@ -28,6 +30,7 @@ class PhotoUploader : DaggerService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        showNotification()
         serviceScope.launch {
             val tokenResult = async {
                 prepareToken()
@@ -37,7 +40,7 @@ class PhotoUploader : DaggerService() {
             val vio = intent?.getViolationId()!!
             val photosBody = ArrayList<MultipartBody.Part>()
             photos?.withIndex()?.forEach {
-                photosBody.add(preparePhotoMultipart(it.value, it.index))
+                photosBody.add(preparePhotoMultipart(it.value.path, it.index))
             }
             val requestResult = async {
                 mainApiService.addPhotos(token = token, id = vio, photos = photosBody)
@@ -47,18 +50,27 @@ class PhotoUploader : DaggerService() {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(applicationContext, "Файлы загружены", Toast.LENGTH_SHORT).show()
                 }
-                // остановить процесс
-            } else {
-                // добавить в базу и остановить процесс
             }
+            stopForeground(true)
+            stopSelf()
         }
         return Service.START_STICKY
     }
 
+    private fun showNotification() {
+        val builder = NotificationCompat.Builder(this, "photoUploaderChannel")
+        builder.setSmallIcon(R.mipmap.image)
+            .setContentText("Загрузка изображений, не отключайте телефон")
+            .setProgress(0, 100, true)
+            .setContentTitle("Загрузка")
+        val notification = builder.build()
+        startForeground(2, notification)
+    }
+
     private fun preparePhotoMultipart(photoPath: String, index: Int): MultipartBody.Part {
         val photoFile = File(photoPath)
-        val videoBody: RequestBody = photoFile.asRequestBody("image/*".toMediaTypeOrNull())
-        return MultipartBody.Part.createFormData("photos[$index]", photoFile.name, videoBody)
+        val photoBody: RequestBody = photoFile.asRequestBody("image/*".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("photos[$index]", photoFile.name, photoBody)
     }
 
     private suspend fun prepareToken(): String {

@@ -1,6 +1,7 @@
 package com.nullit.newpeople.util
 
 import android.content.Intent
+import com.nullit.newpeople.ui.main.photo.adapter.PhotoPresentationModel
 
 fun Intent.putIdViolation(violationId: Int) {
     this.putExtra("violationId", violationId)
@@ -34,10 +35,10 @@ fun Intent.getFlagFromBroadcast(): Boolean {
     return this.getBooleanExtra("startFromBroadcast", false)
 }
 
-fun Intent.putPhotos(list: ArrayList<String>) {
-    this.putStringArrayListExtra("photos", list)
+fun Intent.putPhotos(list: ArrayList<PhotoPresentationModel>) {
+    this.putParcelableArrayListExtra("photos", list)
 }
 
-fun Intent.getPhotos(): ArrayList<String>? {
-    return this.getStringArrayListExtra("photos")
+fun Intent.getPhotos(): ArrayList<PhotoPresentationModel>? {
+    return this.getParcelableArrayListExtra<PhotoPresentationModel>("photos")
 }

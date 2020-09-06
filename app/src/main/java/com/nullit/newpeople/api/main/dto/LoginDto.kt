@@ -20,6 +20,6 @@ data class UserData(
 )
 
 data class ViolationData(
-    @SerializedName("id") val violationId: Int,
+    @SerializedName("id") val typeId: Int,
     @SerializedName("name") val name: String
 )

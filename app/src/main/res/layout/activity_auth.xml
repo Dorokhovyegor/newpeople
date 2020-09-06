@@ -14,6 +14,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="42dp"
         android:paddingTop="2dp"
+        android:src="@mipmap/logo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -95,6 +96,7 @@
         android:id="@+id/circularProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:elevation="20dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

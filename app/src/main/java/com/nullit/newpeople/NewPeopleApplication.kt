@@ -29,6 +29,7 @@ class NewPeopleApplication : DaggerApplication(), HasServiceInjector {
     override fun onCreate() {
         super.onCreate()
         createVideoNotificationChannel()
+        createPhotoNotificationChannel()
     }
 
     private fun createVideoNotificationChannel() {
@@ -37,6 +38,19 @@ class NewPeopleApplication : DaggerApplication(), HasServiceInjector {
             val descriptionText = "Description text"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel("videoUploadChannel", name, importance)
+            channel.description = descriptionText
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createPhotoNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "photoChannel"
+            val descriptionText = "Description text"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("photoUploaderChannel", name, importance)
             channel.description = descriptionText
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

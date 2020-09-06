@@ -5,9 +5,14 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.nullit.newpeople.repo.main.VideoRepo
+import com.nullit.newpeople.room.entity.ViolationEntity
 import com.nullit.newpeople.ui.base.BaseViewModel
 import com.nullit.newpeople.util.WrapperResponse
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SendVideoViewModel
@@ -18,7 +23,7 @@ constructor(
 
     val videoUri = MutableLiveData<Uri>()
     val lastViolationId = MutableLiveData<Int>()
-    val currentVideoState = MutableLiveData<String>()
+    val violationList = MutableLiveData<List<ViolationEntity>>()
 
     fun createNewViolation() {
         viewModelScope.launch {
@@ -31,11 +36,27 @@ constructor(
         }
     }
 
-    suspend fun addNewVideoIntoQueue(path: String, id: Int) {
-        videoRepo.addNewVideoIntoQueeu(path, id)
+    fun getViolationList() {
+        viewModelScope.launch {
+            violationList.value = videoRepo.getViolationList()
+        }
     }
 
-    suspend fun checkStateProcess(): String {
-        return videoRepo.checkStateProcess()
+    suspend fun addNewVideoIntoQueue(path: String, id: Int) {
+        videoRepo.addNewVideoIntoQueue(path, id)
     }
+
+    suspend fun addCategory(violationId: Int, typeId: Int) {
+        GlobalScope.launch(IO) {
+            val result = videoRepo.addViolationType(violationId, typeId)
+            if (result is WrapperResponse.SuccessResponse) {
+                withContext(Main) {
+                    _snackBar.value = "Тип нарушения отправлен"
+                }
+            } else {
+                handleErrorResponse(result)
+            }
+        }
+    }
+
 }

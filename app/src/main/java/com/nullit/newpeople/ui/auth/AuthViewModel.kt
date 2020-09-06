@@ -4,16 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.nullit.newpeople.mappers.UserMapper
+import com.nullit.newpeople.mappers.ViolationMapper
 import com.nullit.newpeople.repo.auth.AuthRepository
 import com.nullit.newpeople.ui.base.BaseViewModel
 import com.nullit.newpeople.util.WrapperResponse
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AuthViewModel
 @Inject constructor(
     private val authRepo: AuthRepository,
-    private val userMapper: UserMapper
+    private val userMapper: UserMapper,
+    private val violationMapper: ViolationMapper
 ) : BaseViewModel() {
 
     private val _successLogin = MutableLiveData<Boolean>()
@@ -33,9 +37,10 @@ class AuthViewModel
                 val preparedUserProperties =
                     userMapper.fromLoginResponseToUserProperties(response.body)
                 val saveResult = authRepo.saveUserDataToDb(preparedUserProperties)
+                authRepo.saveAllViolations(violationMapper.fromLoginResponseToViolationList(response.body))
                 if (saveResult >= 0) {
                     _successLogin.value = true
-                    _loading.value = false
+                    //_loading.value = false
                 }
             } else {
                 handleErrorResponse(response)
@@ -46,8 +51,8 @@ class AuthViewModel
             if (error != null) {
                 // job completed with error
                 _snackBar.value = error.localizedMessage
-                _loading.value = false
             }
+            _loading.value = false
         }
     }
 

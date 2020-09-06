@@ -80,15 +80,8 @@ class VideoUploader : DaggerService() {
     }
 
     private suspend fun prepareVideoFile(videoPath: String): MultipartBody.Part {
-        showNotification(1)
+        showNotification()
         val videoFile = File(videoPath)
-        withContext(Dispatchers.Main) {
-            Toast.makeText(
-                applicationContext,
-                "Видео ${videoFile.name} отправляется",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
         val videoBody: RequestBody = videoFile.asRequestBody("video/*".toMediaTypeOrNull())
         return createFormData("videos[0]", videoFile.name, videoBody)
     }
@@ -98,22 +91,17 @@ class VideoUploader : DaggerService() {
         return "${info?.token_type} ${info?.token}"
     }
 
-    private fun showNotification(violationId: Int) {
+    private fun showNotification() {
         val builder = NotificationCompat.Builder(this, "videoUploadChannel")
         builder.setSmallIcon(R.mipmap.image)
-            .setContentText("Загрузка видео...")
+            .setContentText("Загрузка видео. Не отключайте телефон")
             .setProgress(0, 100, true)
             .setContentTitle("Загрузка")
         val notification = builder.build()
-        startForeground(violationId, notification)
+        startForeground(1, notification)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
-    }
-
-    override fun onDestroy() {
-        Toast.makeText(this, "Сервис уничтожен", Toast.LENGTH_LONG).show()
-        super.onDestroy()
     }
 }
