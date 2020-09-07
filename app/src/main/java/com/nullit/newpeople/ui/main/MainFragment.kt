@@ -10,10 +10,10 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.afollestad.materialdialogs.MaterialDialog
 import com.nullit.newpeople.R
 import com.nullit.newpeople.ui.auth.AuthActivity
 import com.nullit.newpeople.ui.base.BaseMainFragment
-import com.nullit.newpeople.ui.main.video.SendVideoViewModel
 import com.nullit.newpeople.util.ViewModelProviderFactory
 import kotlinx.android.synthetic.main.main_fragment.*
 import pub.devrel.easypermissions.EasyPermissions
@@ -36,7 +36,8 @@ class MainFragment : BaseMainFragment(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mainFragmentViewModel = ViewModelProvider(this, viewModelProviderFactory)[MainFragmentViewModel::class.java]
+        mainFragmentViewModel =
+            ViewModelProvider(this, viewModelProviderFactory)[MainFragmentViewModel::class.java]
         super.onViewCreated(view, savedInstanceState)
         EasyPermissions.requestPermissions(
             requireActivity(),
@@ -74,8 +75,16 @@ class MainFragment : BaseMainFragment(), EasyPermissions.PermissionCallbacks {
             findNavController().navigate(R.id.action_mainFragment_to_sendVideoFragment)
         }
         logoutButton.setOnClickListener {
-            // clear db and logout
-            mainFragmentViewModel.logout()
+            MaterialDialog(requireContext()).show {
+                title(null, "Подтверждение")
+                    .message(null, "Вы действительно хотите выйти?")
+                positiveButton {
+                    mainFragmentViewModel.logout()
+                }
+                    .negativeButton {
+                        dismiss()
+                    }
+            }
         }
         sendPhotos.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_sendFormFragment)

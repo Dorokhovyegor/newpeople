@@ -14,19 +14,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:textAlignment="center"
             android:textColor="#fff"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/retryGetIdButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:backgroundTint="#F84D49"
+            android:text="@string/getid"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/titleReportId"
+            app:layout_constraintEnd_toEndOf="@id/titleReportId"
+            app:layout_constraintTop_toTopOf="@id/titleReportId" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/previewContainer"
             android:layout_width="match_parent"
             android:layout_height="175dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             app:cardCornerRadius="24dp"
             app:layout_constraintTop_toBottomOf="@id/titleReportId">
 
@@ -34,6 +48,19 @@
                 android:id="@+id/previewImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/addVideoButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="16dp"
+                android:backgroundTint="#00FFFFFF"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_plus"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@id/categories" />
 
         </androidx.cardview.widget.CardView>
 

@@ -8,8 +8,7 @@ import com.nullit.newpeople.mappers.ViolationMapper
 import com.nullit.newpeople.repo.auth.AuthRepository
 import com.nullit.newpeople.ui.base.BaseViewModel
 import com.nullit.newpeople.util.WrapperResponse
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,8 +57,12 @@ class AuthViewModel
 
     fun requestUserAuthStatus() {
         viewModelScope.launch {
-            val result = authRepo.checkUserProperties()
-            _successLogin.value = result
+            _loading.value = true
+            val result = async {
+                authRepo.checkUserProperties()
+            }
+            _successLogin.value = result.await()
+            _loading.value = false
         }
     }
 

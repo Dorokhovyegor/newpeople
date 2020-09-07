@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ class SendVideoFragment : BaseMainFragment(), ActivityResultHandlerVideo {
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
+    val REQUEST_VIDEO_CAPTURE = 112
 
     @Inject
     lateinit var requestManager: RequestManager
@@ -105,6 +107,11 @@ class SendVideoFragment : BaseMainFragment(), ActivityResultHandlerVideo {
             stopUploading()
             findNavController().popBackStack()
         }
+        addVideoButton.setOnClickListener {
+            if (lastPath == null) {
+                openCameraViaIntent()
+            }
+        }
     }
 
     override fun subscribeObservers() {
@@ -115,6 +122,11 @@ class SendVideoFragment : BaseMainFragment(), ActivityResultHandlerVideo {
                 .centerCrop()
                 .into(previewImageView)
             lastPath = newVideoUri.getRealPathFromURI(requireContext())
+            if (lastPath == null) {
+                addVideoButton.visibility = View.VISIBLE
+            } else {
+                addVideoButton.visibility = View.GONE
+            }
         })
 
         sendVideoViewModel.violationList.observe(viewLifecycleOwner, Observer { list ->
@@ -145,7 +157,20 @@ class SendVideoFragment : BaseMainFragment(), ActivityResultHandlerVideo {
         sendVideoViewModel.lastViolationId.observe(viewLifecycleOwner, Observer { lastId ->
             titleReportId.text = "Заявка №${lastId}"
             this.lastId = lastId
+            if (lastId == null) {
+                retryGetIdButton.visibility = View.VISIBLE
+            } else {
+                retryGetIdButton.visibility = View.GONE
+            }
         })
+    }
+
+    private fun openCameraViaIntent() {
+        Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
+            takeVideoIntent.resolveActivity(requireActivity().packageManager)?.also {
+                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
+            }
+        }
     }
 
     private fun startUploading(lastPath: String, lastId: Int) {

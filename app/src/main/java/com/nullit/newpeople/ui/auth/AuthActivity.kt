@@ -3,8 +3,10 @@ package com.nullit.newpeople.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.nullit.newpeople.R
 import com.nullit.newpeople.ui.base.BaseActivity
 import com.nullit.newpeople.ui.main.MainActivity
@@ -31,14 +33,31 @@ class AuthActivity : BaseActivity() {
 
     private fun initListeners() {
         loginButton.setOnClickListener {
-            authViewModel.login(
-                loginEditText.text.toString().trim(),
-                passwordEditText.text.toString().trim()
-            )
+            login()
+        }
+        passwordEditText.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_SEND -> {
+                    login()
+                    true
+                }
+                else -> false
+            }
         }
     }
 
+    private fun login() {
+        authViewModel.login(
+            loginEditText.text.toString().trim(),
+            passwordEditText.text.toString().trim()
+        )
+    }
+
     private fun subscribeObservers() {
+        authViewModel.snackBar.observe(this, Observer {
+            Snackbar.make(loginEditText.rootView, it.toString(), Snackbar.LENGTH_SHORT)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE).show()
+        })
         authViewModel.progressBar.observe(this, Observer {
             if (it) {
                 backgroundProgress.visibility = View.VISIBLE
@@ -50,6 +69,10 @@ class AuthActivity : BaseActivity() {
         })
         authViewModel.successLogin.observe(this, Observer { isAuthenticated ->
             if (isAuthenticated) {
+                loginEditText.setText("")
+                loginEditText.isEnabled = false
+                passwordEditText.setText("")
+                passwordEditText.isEnabled = false
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
