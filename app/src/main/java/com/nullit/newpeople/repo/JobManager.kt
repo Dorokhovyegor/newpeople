@@ -39,8 +39,7 @@ open class JobManager {
     private fun convertErrorBody(throwable: HttpException): String? {
         return try {
             throwable.response()?.errorBody()?.source()?.let {
-                "хуй"
-                //ErrorHandling.parseDetailJsonResponse(it.readUtf8())
+                "Неизвестная ошибка"
             }
         } catch (exception: Exception) {
             null
