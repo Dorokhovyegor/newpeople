@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "59782834160",
+    "firebase_url": "https://new-people-952e3.firebaseio.com",
+    "project_id": "new-people-952e3",
+    "storage_bucket": "new-people-952e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59782834160:android:49277a4db8cf0cc7799f35",
+        "android_client_info": {
+          "package_name": "com.nullit.newpeople"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "59782834160-ckbn5aij6292474nk7nj4ratnh2kuj60.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEeH8L7fPvlh8bwsQgpIj5jOQWZv1czPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "59782834160-ckbn5aij6292474nk7nj4ratnh2kuj60.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

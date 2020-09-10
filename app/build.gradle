@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 29
@@ -12,8 +14,8 @@ android {
         applicationId "com.nullit.newpeople"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.5"
+        versionCode 7
+        versionName "crashlytics init"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -91,4 +93,7 @@ dependencies {
 
     implementation 'com.github.esafirm.android-image-picker:imagepicker:2.3.2'
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
+
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 }

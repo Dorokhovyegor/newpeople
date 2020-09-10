@@ -22,7 +22,6 @@ import javax.inject.Inject
 class MainFragment : BaseMainFragment(), EasyPermissions.PermissionCallbacks {
 
     val REQUEST_VIDEO_CAPTURE = 112
-
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     lateinit var mainFragmentViewModel: MainFragmentViewModel
@@ -57,7 +56,7 @@ class MainFragment : BaseMainFragment(), EasyPermissions.PermissionCallbacks {
         ) {
             EasyPermissions.requestPermissions(
                 requireActivity(),
-                "Для нормальной работы приложения, дайте доступ к камере",
+                "Для нормальной работы приложения, дайте доступ к камере и к внешнему хранилищу.",
                 102,
                 Manifest.permission.CAMERA,
                 Manifest.permission.READ_EXTERNAL_STORAGE
@@ -70,7 +69,6 @@ class MainFragment : BaseMainFragment(), EasyPermissions.PermissionCallbacks {
     override fun initListeners() {
         // init click listeners
         sosButton.setOnClickListener {
-            // do request and open video camera
             checkPermsAndOpenCamera()
             findNavController().navigate(R.id.action_mainFragment_to_sendVideoFragment)
         }
