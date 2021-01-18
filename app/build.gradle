@@ -14,8 +14,8 @@ android {
         applicationId "com.nullit.newpeople"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 7
-        versionName "crashlytics init"
+        versionCode 8
+        versionName "legacy store request"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
